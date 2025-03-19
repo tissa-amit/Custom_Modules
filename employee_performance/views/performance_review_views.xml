@@ -40,7 +40,7 @@ else:
         </field>
     </record>
 
-<!--    search view-->
+    <!--    search view-->
     <record id="view_performance_review_search" model="ir.ui.view">
         <field name="name">performance.review.search</field>
         <field name="model">performance.review</field>
@@ -61,13 +61,20 @@ else:
         </field>
     </record>
 
-<!--    access rule field-->
+    <!--    access rule field-->
     <record id="view_performance_review_form" model="ir.ui.view">
         <field name="name">performance.review.form</field>
         <field name="model">performance.review</field>
         <field name="arch" type="xml">
             <form string="Performance Review">
                 <sheet>
+                    <!--  # Action -> ir.actions.act_url ( URL Redirect )-->
+                    <header>
+                        <button name="action_cancel_redirect" type="object" string="Save And Exit "
+                                class="btn-secondary" icon="fa-check" create="false"
+                                confirm="Are you sure? Any changes will be saved."/>
+
+                    </header>
                     <group>
                         <!-- Fields Editable by Employee -->
                         <field name="employee_id" groups="employee_performance.group_employee"/>
@@ -169,6 +176,7 @@ else:
             </graph>
         </field>
     </record>
+
 
     <!-- Action -->
     <record id="action_performance_review" model="ir.actions.act_window">

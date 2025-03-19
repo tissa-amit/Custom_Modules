@@ -46,3 +46,10 @@ class PerformanceReview(models.Model):
             raise UserError("Only the CEO can approve reviews.")
 
         self.write({'is_approved': True})
+
+    def action_cancel_redirect(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'url': 'http://localhost:1881/odoo/action-476',
+            'target': 'self',
+        }
