@@ -1,0 +1,20 @@
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<odoo>-->
+<!--    &lt;!&ndash; Cron Job: Revert Approved Reviews to Draft &ndash;&gt;-->
+<!--    <record id="ir_cron_revert_approval_reviews" model="ir.cron">-->
+<!--        <field name="name">Revert Approved Reviews to Draft</field> &lt;!&ndash; Cron job name &ndash;&gt;-->
+<!--        <field name="model_id" ref="model_performance_review"/> &lt;!&ndash; Reference to performance.review model &ndash;&gt;-->
+<!--        <field name="state">code</field> &lt;!&ndash; Execute Python code &ndash;&gt;-->
+<!--        <field name="code"><![CDATA[-->
+<!--# Find approved reviews that are not in draft and have been approved for more than 30 days-->
+<!--reviews = env['performance.review'].search([('is_approved', '=', False), ('status', '!=', 'in_progress')])-->
+<!--for review in reviews:-->
+<!--    if (fields.Date.today() - review.review_date).days >= 30:-->
+<!--        review.write({'is_approved': False, 'status': 'draft'})-->
+<!--]]></field> &lt;!&ndash; Python code wrapped in CDATA &ndash;&gt;-->
+<!--        <field name="user_id" ref="base.user_admin"/> &lt;!&ndash; User executing the job (admin) &ndash;&gt;-->
+<!--        <field name="interval_number">12</field> &lt;!&ndash; Frequency: every 12 units &ndash;&gt;-->
+<!--        <field name="interval_type">hours</field> &lt;!&ndash; Unit: hours &ndash;&gt;-->
+<!--        <field name="doall" eval="False"/> &lt;!&ndash; Do not execute all missed occurrences &ndash;&gt;-->
+<!--    </record>-->
+<!--</odoo>-->

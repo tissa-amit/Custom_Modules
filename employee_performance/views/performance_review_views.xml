@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Server Action: Mass Approve Performance Reviews -->
+    <record id="action_mass_approve_reviews" model="ir.actions.server">
+        <field name="name">Mass Approve Reviews</field>
+        <field name="model_id" ref="model_performance_review"/>
+        <field name="binding_model_id" ref="model_performance_review"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[
+if user.has_group('employee_performance.group_ceo'):
+    records.write({'is_approved': True})
+else:
+    raise UserError("Only the CEO can approve reviews.")
+]]></field>
+    </record>
+
+    <!-- List View -->
+    <record id="performance_review_view_list" model="ir.ui.view">
+        <field name="name">performance.review.view.list</field>
+        <field name="model">performance.review</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="employee_id"/>
+                <field name="review_date"/>
+                <field name="score"/>
+                <field name="status"/>
+                <!--                <field name="profileimage" widget="image" class="oe_avatar"/>-->
+                <field name="salary"/>
+                <field name="rating"/>
+                <field name="is_approved"/>
+
+                <button name="action_mass_approve" type="object" string="Approve"
+                        class="oe_highlight"
+                        icon="fa-check"
+                        groups="employee_performance.group_ceo"/>
+
+            </list>
+        </field>
+    </record>
+
+<!--    search view-->
+    <record id="view_performance_review_search" model="ir.ui.view">
+        <field name="name">performance.review.search</field>
+        <field name="model">performance.review</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_id"/>  <!-- Search by Employee -->
+                <field name="status"/>  <!-- Search by Status -->
+                <field name="review_date"/>  <!-- Search by Date -->
+
+                <filter name="approved" string="Approved" domain="[('is_approved', '=', True)]"/>
+                <filter name="pending" string="Pending" domain="[('status', '=', 'in_progress')]"/>
+
+                <group string="Group By">
+                    <filter name="group_by_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_by_status" string="Status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+<!--    access rule field-->
+    <record id="view_performance_review_form" model="ir.ui.view">
+        <field name="name">performance.review.form</field>
+        <field name="model">performance.review</field>
+        <field name="arch" type="xml">
+            <form string="Performance Review">
+                <sheet>
+                    <group>
+                        <!-- Fields Editable by Employee -->
+                        <field name="employee_id" groups="employee_performance.group_employee"/>
+                        <field name="review_date" groups="employee_performance.group_employee"/>
+                        <field name="profileimage" groups="employee_performance.group_employee"/>
+                        <field name="attachment" groups="employee_performance.group_employee"/>
+
+                        <!-- Fields Read-Only for Employee -->
+                        <field name="rating" readonly="1"/>
+                        <field name="salary" readonly="1"/>
+                        <field name="comments" readonly="1"/>
+                        <field name="status" readonly="1"/>
+                        <field name="score" readonly="1"/>
+                        <field name="is_approved" readonly="1"/>
+
+                        <!-- Fields Editable by Manager -->
+                        <field name="rating" groups="employee_performance.group_manager"/>
+                        <field name="salary" groups="employee_performance.group_manager"/>
+                        <field name="comments" groups="employee_performance.group_manager"/>
+                        <field name="status" groups="employee_performance.group_manager"/>
+                        <field name="score" groups="employee_performance.group_manager"/>
+
+                        <!-- Fields Editable by CEO -->
+                        <field name="is_approved" groups="employee_performance.group_ceo"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Kanban View -->
+    <record id="performance_review_view_kanban" model="ir.ui.view">
+        <field name="name">performance.review.view.kanban</field>
+        <field name="model">performance.review</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="profileimage"/>
+                <field name="employee_id"/>
+                <field name="score"/>
+                <field name="status"/>
+                <field name="rating"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_title">
+                                <!--                                <field name="profileimage" widget="image" class="oe_avatar"/>-->
+                                <field name="profileimage" widget="image" class="oe_avatar"
+                                       style="width: 75px; height: 75px; padding:2px"/>
+                            </div>
+                            <div>
+                                <div>
+                                    <b>
+                                        <field name="employee_id"/>
+                                    </b>
+                                </div>
+                                <div>
+                                    Score:
+                                    <field name="score"/>
+                                </div>
+                                <div>
+                                    Status:
+                                    <field name="status"/>
+                                </div>
+                                <div>
+                                    Rating:
+                                    <field name="rating"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="performance_review_view_pivot" model="ir.ui.view">
+        <field name="name">performance.review.view.pivot</field>
+        <field name="model">performance.review</field>
+        <field name="arch" type="xml">
+            <pivot string="Performance Reviews">
+                <field name="employee_id" type="row"/>
+                <field name="status" type="col"/>
+                <field name="score" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph View -->
+    <record id="performance_review_view_graph" model="ir.ui.view">
+        <field name="name">performance.review.view.graph</field>
+        <field name="model">performance.review</field>
+        <field name="arch" type="xml">
+            <graph string="Performance Reviews">
+                <field name="employee_id" type="row"/>
+                <field name="score" type="measure"/>
+                <field name="status" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_performance_review" model="ir.actions.act_window">
+        <field name="name">Performance Reviews</field>
+        <field name="res_model">performance.review</field>
+        <field name="view_mode">list,form,kanban,pivot,graph</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_performance_review_root" name="Performance Management"/>
+    <menuitem id="menu_performance_review" name="Performance Reviews" parent="menu_performance_review_root"
+              action="action_performance_review"/>
+</odoo>
+
+

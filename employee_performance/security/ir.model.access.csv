@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_performance_review,access_performance_review,model_performance_review,group_employee,1,0,1,0
+access_performance_review,access_performance_review,model_performance_review,group_manager,1,1,1,0
+access_performance_review,access_performance_review,model_performance_review,group_ceo,1,1,1,1
